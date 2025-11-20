@@ -24,9 +24,10 @@ function calculate() {
     }
 
     let result = decimalNumbers.reduce((acc, val) => acc & val);
-    outputText += `<br>Kod dostepu: ${result}`;
+    outputText += `<br>Kod dostepu: <b>${result}</b>`;
 
     document.getElementById("output").innerHTML = outputText;
 }
+
 
 
