@@ -14,27 +14,24 @@ function detectSuggestedBase(str) {
     str = str.trim().toUpperCase();
     if (!str) return null;
 
-    // Znaki dopuszczalne tylko 0–9 i A–F
+    // Dopuszczalne znaki tylko 0–9 i A–F
     if (!/^[0-9A-F]+$/.test(str)) return null;
 
-    // Popularne systemy
-    if (/^[01]+$/.test(str)) return 2;
-    if (/^[0-7]+$/.test(str)) return 8;
-    if (/^[0-9]+$/.test(str)) return 10;
-
-    // Jeśli ciąg ma litery A–F → minimalny możliwy system = max digit + 1
+    // Obliczamy najwyższą "wartość" znaku
     let maxVal = 0;
     for (let ch of str) {
         let val;
-        if (ch >= '0' && ch <= '9') val = ch.charCodeAt(0) - 48;
-        else val = ch.charCodeAt(0) - 55; // A=10, B=11...
-
+        if (ch >= '0' && ch <= '9') {
+            val = ch.charCodeAt(0) - 48;      // '0' = 48
+        } else {
+            val = ch.charCodeAt(0) - 55;      // 'A' = 65 → 65 - 55 = 10
+        }
         if (val > maxVal) maxVal = val;
     }
 
     let minBase = Math.max(maxVal + 1, 2);
 
-    // Ograniczenie: tylko systemy 2–16
+    // Ograniczenie do 2–16
     if (minBase < 2 || minBase > 16) return null;
 
     return minBase;
@@ -112,3 +109,4 @@ function calculate() {
     outputDiv.innerHTML = outputText;
     outputDiv.style.display = "block";
 }
+
