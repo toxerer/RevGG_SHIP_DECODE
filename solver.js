@@ -14,8 +14,8 @@ function detectSuggestedBase(str) {
     str = str.trim().toUpperCase();
     if (!str) return null;
 
-    // Dozwolone znaki: 0–9, A–F
-    if (!/^[0-9A-F]+$/.test(str)) return null;
+    // Dozwolone znaki: 0–9, A–Z (dla systemów 2–36)
+    if (!/^[0-9A-Z]+$/.test(str)) return null;
 
     let maxVal = 0;
     const letters = new Set();
@@ -23,16 +23,17 @@ function detectSuggestedBase(str) {
     for (let ch of str) {
         let val;
         if (ch >= '0' && ch <= '9') {
-            val = ch.charCodeAt(0) - 48; // '0' = 48
+            val = ch.charCodeAt(0) - 48; // '0' = 48 → 0–9
         } else {
-            val = ch.charCodeAt(0) - 55; // 'A' = 65 → 10
+            val = ch.charCodeAt(0) - 55; // 'A' = 65 → 10, ..., 'Z' = 90 → 35
             letters.add(ch);
         }
         if (val > maxVal) maxVal = val;
     }
 
+    const maxBase = 36;
     let minBase = Math.max(maxVal + 1, 2);
-    if (minBase > 16) return null;
+    if (minBase > maxBase) return null; // np. pojawił się znak > 'Z'
 
     const hasOnlyA = (letters.size === 1 && letters.has('A'));
     const hasEorF = letters.has('E') || letters.has('F');
@@ -40,10 +41,10 @@ function detectSuggestedBase(str) {
     // 1) Szukamy podstaw, które dają 6-cyfrowy wynik w systemie 10
     //    i są > 900000 (czyli zakres 900000–999999)
     const sixDigitCandidates = [];
-    for (let base = minBase; base <= 16; base++) {
+    for (let base = minBase; base <= maxBase; base++) {
         const decimal = parseInt(str, base);
+        if (Number.isNaN(decimal)) continue;
 
-        // tylko 6 cyfr i > 900000
         if (decimal >= 900000 && decimal <= 999999) {
             sixDigitCandidates.push({ base, decimal });
         }
@@ -52,8 +53,8 @@ function detectSuggestedBase(str) {
     if (sixDigitCandidates.length > 0) {
         const bases = sixDigitCandidates.map(c => c.base);
 
-        // Jeśli wśród kandydatów jest 16 → preferujemy 16 (klasyczny HEX)
-        if (bases.includes(16)) {
+        // Jeśli wśród kandydatów jest 16 i liczba używa tylko cyfr 0–9, A–F → preferujemy 16 (klasyczny HEX)
+        if (bases.includes(16) && maxVal <= 15) {
             return 16;
         }
 
@@ -69,17 +70,20 @@ function detectSuggestedBase(str) {
     // 2) Jeżeli żadna podstawa nie daje 6-cyfrowego wyniku > 900000,
     // używamy prostszych heurystyk:
 
-    if (hasEorF) {
+    // Klasyczny HEX – tylko jeśli liczba używa max A–F i podstawa 16 jest w zasięgu
+    if (hasEorF && maxVal <= 15 && minBase <= 16) {
         return 16;
     }
 
+    // Jeśli jedyną literą jest A i 15 jest możliwe → preferujemy 15
     if (hasOnlyA && minBase <= 15) {
         return 15;
     }
 
-    // Domyślnie: minimalna możliwa podstawa
+    // Domyślnie: minimalna możliwa podstawa (na podstawie największego symbolu)
     return minBase;
 }
+
 
 
 
@@ -123,6 +127,13 @@ function calculate() {
             return;
         }
 
+        // Walidacja znaków (0–9, A–Z) dla systemów 2–36
+        if (!/^[0-9A-Z]+$/.test(numStr.toUpperCase())) {
+            showMessage("danger", `Ciąg "<b>${numStr}</b>" zawiera niedozwolone znaki dla systemów 2–36.`);
+            document.getElementById("output").style.display = "none";
+            return;
+        }
+        
         // Sprawdzenie, czy wszystkie cyfry mieszczą się w podanym systemie
         for (let ch of numStr) {
             let val = (ch >= '0' && ch <= '9')
@@ -159,6 +170,7 @@ function calculate() {
     outputDiv.innerHTML = outputText;
     outputDiv.style.display = "block";
 }
+
 
 
 
