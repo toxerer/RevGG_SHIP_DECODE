@@ -2,6 +2,7 @@ function calculate() {
     const numbers = document.querySelectorAll(".number");
     const bases = document.querySelectorAll(".base");
     let decimalNumbers = [];
+    let outputText = "";
 
     for (let i = 0; i < numbers.length; i++) {
         let numStr = numbers[i].value.trim();
@@ -19,10 +20,11 @@ function calculate() {
         }
 
         decimalNumbers.push(decimal);
+        outputText += `Liczba ${i+1} w systemie 10: ${decimal}<br>`;
     }
 
-    // Bitowy AND wszystkich liczb
     let result = decimalNumbers.reduce((acc, val) => acc & val);
+    outputText += `<br>Wynik bitowego AND: ${result}`;
 
-    document.getElementById("result").innerText = result;
+    document.getElementById("output").innerHTML = outputText;
 }
