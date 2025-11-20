@@ -117,15 +117,8 @@ function calculate() {
         let base = parseInt(bases[i].value);
 
         // Walidacja podstawy
-        if (!numStr || isNaN(base) || base < 2 || base > 16) {
-            showMessage("danger", `Nieprawidłowa liczba lub system w panelu <b>${i + 1}</b> (dozwolone systemy: 2–16).`);
-            document.getElementById("output").style.display = "none";
-            return;
-        }
-
-        // Walidacja znaków (tylko 0–9, A–F)
-        if (!/^[0-9A-F]+$/.test(numStr)) {
-            showMessage("danger", `Ciąg "<b>${numStr}</b>" zawiera niedozwolone znaki dla systemów 2–16.`);
+        if (!numStr || isNaN(base) || base < 2) {
+            showMessage("danger", `Nieprawidłowa liczba lub system w panelu <b>${i + 1}</b>.`);
             document.getElementById("output").style.display = "none";
             return;
         }
@@ -156,14 +149,15 @@ function calculate() {
         }
 
         decimalNumbers.push(decimal);
-        outputText += `${i + 1}: <b>${decimal}</b><br>`;
+        outputText += `${decimal} -> <b>${decimal}</b><br>`;
     }
 
     let result = decimalNumbers.reduce((acc, val) => acc & val);
-    outputText += `<br>Kod dostępu: <b>${result}</b>`;
+    outputText += `<br>Kod dostępu: <span style="font-size: 20px;"><b>${result}</b></span>`;
 
     const outputDiv = document.getElementById("output");
     outputDiv.innerHTML = outputText;
     outputDiv.style.display = "block";
 }
+
 
