@@ -149,4 +149,11 @@ function calculate() {
 }
 
 
+function reset() {
+    document.querySelectorAll('.base, .number')
+    .forEach(el => el.value = "");
+}
+
+
+
 
