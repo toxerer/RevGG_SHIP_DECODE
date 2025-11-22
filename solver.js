@@ -74,6 +74,7 @@ function detectSuggestedBase(str) {
 document.addEventListener("DOMContentLoaded", () => {
     const numberInputs = document.querySelectorAll(".number");
     const baseInputs = document.querySelectorAll(".base");
+    const outputDiv = document.getElementById("outputDiv"); // <-- pamiętaj o elemencie!
 
     numberInputs.forEach((input, index) => {
         const baseInput = baseInputs[index];
@@ -84,9 +85,18 @@ document.addEventListener("DOMContentLoaded", () => {
             if (suggestion !== null) {
                 baseInput.value = suggestion;
             }
+
+            outputDiv.style.display = "none";
+        });
+    });
+
+    baseInputs.forEach(input => {
+        input.addEventListener("input", () => {
+            outputDiv.style.display = "none";
         });
     });
 });
+
 
 function calculate() {
     const numbers = document.querySelectorAll(".number");
@@ -153,6 +163,7 @@ function reset() {
     document.getElementById("output").style.display = 'none';
     document.getElementById("msgBox").innerHTML = '';
 }
+
 
 
 
