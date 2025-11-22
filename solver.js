@@ -74,7 +74,7 @@ function detectSuggestedBase(str) {
 document.addEventListener("DOMContentLoaded", () => {
     const numberInputs = document.querySelectorAll(".number");
     const baseInputs = document.querySelectorAll(".base");
-    const outputDiv = document.getElementById("outputDiv"); // <-- pamiętaj o elemencie!
+    const outputDiv = document.getElementById("output");
 
     numberInputs.forEach((input, index) => {
         const baseInput = baseInputs[index];
@@ -163,6 +163,7 @@ function reset() {
     document.getElementById("output").style.display = 'none';
     document.getElementById("msgBox").innerHTML = '';
 }
+
 
 
 
